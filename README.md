@@ -1,4 +1,4 @@
-## 🌳 Advanced Suffix Tree Implementation in Racket
+## Advanced Suffix Tree Implementation in Racket
 
 A comprehensive, purely functional implementation of suffix trees in Racket, featuring both atomic (AST) and compact (CST) representations across four development stages. This implementation emphasises pattern matching, text analysis, streaming capabilities, and advanced functional programming concepts.
 
