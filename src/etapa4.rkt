@@ -34,24 +34,19 @@
           (longest-help (cdr w1) (cdr w2) (append w3 (list (car w1))) (cdr restw1) (cdr restw2))
           (longest-help null null w3 restw1 restw2))))
 
-
 ; Modified function: replaced "list" with "collection"
 
 (define (longest-common-prefix-of-collection words)
- 
   (define (helper words prefix)
     (if (or (collection-empty? words)
             (collection-empty? (collection-rest prefix)))
         prefix
         (helper (collection-rest words)
                 (first (longest-common-prefix prefix (collection-first words))))))
- 
   (helper (collection-rest words) (collection-first words)))
-
 
 (define (match-pattern-with-label st pattern)
   (define branch (get-ch-branch st (car pattern)))
- 
   (if (not branch)
       (list #f '())
       (let* ((label (get-branch-label branch))
@@ -65,23 +60,15 @@
               (else (list #f prefix))))))
 
 (define (st-has-pattern? st pattern)
- 
   (define match (match-pattern-with-label st pattern))
- 
   (cond ((equal? match #t) #t)
-
-
         ((equal? (first match) #f) #f)
-
-
         (else (st-has-pattern? (third match) (second match)))))
-
 
 (define (get-suffixes text)
   (if (null? text)
       empty-collection
       (collection-cons text (get-suffixes (cdr text)))))
-
 
 (define (get-ch-words words-stream ch)
   (if (collection-empty? words-stream)              
@@ -135,19 +122,17 @@
 (define text->ast
   (text->st ast-func))
 
-
 (define text->cst
   (text->st cst-func))
-
 
 ; If you respected the abstraction barrier,
 ; this function remains unchanged.
 (define (substring? text pattern)
   (let* ((text-to-st ((text->st ast-func) text))
-    (result (st-has-pattern? text-to-st pattern)))
-  (if (equal? result #t)
-      #t
-      #f)))
+         (result (st-has-pattern? text-to-st pattern)))
+    (if (equal? result #t)
+        #t
+        #f)))
 
 ; If you respected the abstraction barrier,
 ; this function remains unchanged.

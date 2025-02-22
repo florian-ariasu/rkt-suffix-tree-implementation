@@ -26,16 +26,22 @@
 
 (define (collection-first l)
   (stream-first l))
+
 (define (collection-rest l)
   (stream-rest l))
+
 (define (collection-map func l)
   (stream-map func l))
+
 (define (collection-filter func l)
   (stream-filter func l))
+
 (define (collection-empty? f)
   (stream-empty? f))
+
 (define empty-collection
   empty-stream)
+
 (define (collection-cons elem l)
   (stream-cons elem l))
 

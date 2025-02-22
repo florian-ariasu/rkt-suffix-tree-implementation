@@ -43,8 +43,8 @@
 ;; operator to check if a ST is empty
 (define (st-empty? ST)
   (if (null? ST)
-       #t
-       #f))
+      #t
+      #f))
 
 ;; operator to extract the first branch of a ST
 (define (first-branch ST)

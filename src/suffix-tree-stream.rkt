@@ -45,8 +45,8 @@
 ; Extracts the first branch of an ST
 (define (first-branch ST)
   (if (stream-empty? ST)
-       empty-stream
-       (stream-first ST)))
+      empty-stream
+      (stream-first ST)))
 
 ; Extracts the rest of the branches of an ST (excluding the first one)
 (define (other-branches ST)

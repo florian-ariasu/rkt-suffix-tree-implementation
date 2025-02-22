@@ -14,14 +14,13 @@
 ; Use tail recursion.
 
 (define (longest-common-prefix w1 w2)
-  (longest-help w1 w2 null w1 w2))
+  (let-values ([(prefix rest1 rest2) (longest-help w1 w2 '())])
+    (list (reverse prefix) rest1 rest2)))
 
-(define (longest-help w1 w2 w3 restw1 restw2)
-  (if (or (null? w1) (null? w2))
-      (append (list w3) (list restw1) (list restw2))
-      (if (equal? (car w1) (car w2))
-          (longest-help (cdr w1) (cdr w2) (append w3 (list (car w1))) (cdr restw1) (cdr restw2))
-          (longest-help null null w3 restw1 restw2))))
+(define (longest-help w1 w2 acc)
+  (if (or (null? w1) (null? w2) (not (equal? (car w1) (car w2))))
+      (values acc w1 w2)
+      (longest-help (cdr w1) (cdr w2) (cons (car w1) acc))))
 
 ; TODO 3
 ; Implement a recursive function that takes a non-empty list of words starting 
@@ -29,14 +28,10 @@
 ; Stop searching once the current common prefix is guaranteed to be the final common prefix.
 
 (define (longest-common-prefix-of-list words)
- 
   (define (helper words prefix)
-    (if (or (null? words)
-            (null? (cdr prefix)))
+    (if (or (null? words) (null? (cdr prefix)))
         prefix
-        (helper (cdr words)
-                (first (longest-common-prefix prefix (car words))))))
- 
+        (helper (cdr words) (first (longest-common-prefix prefix (car words))))))
   (helper (cdr words) (car words)))
 
 ; TODO 4
@@ -50,18 +45,18 @@
 
 (define (match-pattern-with-label st pattern)
   (define branch (get-ch-branch st (car pattern)))
- 
   (if (not branch)
       (list #f '())
-      (let* ((label (get-branch-label branch))
-             (subtree (get-branch-subtree branch))
-             (lcp (longest-common-prefix label pattern))
-             (prefix (first lcp))
-             (new-label (second lcp))
-             (new-pattern (third lcp)))
-        (cond ((null? new-pattern) #t)
-              ((null? new-label) (list prefix new-pattern subtree))
-              (else (list #f prefix))))))
+      (let* ([label (get-branch-label branch)]
+             [subtree (get-branch-subtree branch)]
+             [lcp (longest-common-prefix label pattern)]
+             [prefix (first lcp)]
+             [new-label (second lcp)]
+             [new-pattern (third lcp)])
+        (cond
+          [(null? new-pattern) #t]
+          [(null? new-label) (list prefix new-pattern subtree)]
+          [else (list #f prefix)]))))
 
 ; TODO 5
 ; Implement the st-has-pattern? function that takes a suffix tree and a pattern 
@@ -69,6 +64,7 @@
 
 (define (st-has-pattern? st pattern)
   (define match (match-pattern-with-label st pattern))
-  (cond ((equal? match #t) #t)
-        ((equal? (first match) #f) #f)
-        (else (st-has-pattern? (third match) (second match)))))
+  (cond
+    [(equal? match #t) #t]
+    [(equal? (first match) #f) #f]
+    [else (st-has-pattern? (third match) (second match))]))
