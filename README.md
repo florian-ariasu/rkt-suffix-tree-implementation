@@ -161,11 +161,6 @@ Example Tree (for "BANANA$"):
 (stream-ref text-stream 0) ; Get first suffix
 ```
 
-### 📚 Further Reading
-- [Suffix Trees: A Survey](https://www.cs.helsinki.fi/u/ukkonen/SuffixT1withFigs.pdf)
-- [Ukkonen's Algorithm](https://www.cs.helsinki.fi/u/ukkonen/SuffixT1.pdf)
-- [Applications in Bioinformatics](https://academic.oup.com/bioinformatics/article/25/11/1384/332905)
-
 ### 🤝 Contributing
 Contributions welcome in areas such as:
 - Additional tree operations
