@@ -166,7 +166,6 @@ Contributions welcome in areas such as:
 - Additional tree operations
 - Performance optimisations
 - New text analysis features
-- Documentation improvements
 - Stream processing enhancements
 
 ### 📜 Licence
