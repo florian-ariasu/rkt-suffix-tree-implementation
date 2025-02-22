@@ -4,25 +4,25 @@ A comprehensive, purely functional implementation of suffix trees in Racket, fea
 
 ### 📑 Project Stages Overview
 
-#### Stage 1: Core Implementation & Pattern Matching
+##### Stage 1: Core Implementation & Pattern Matching
 - Basic suffix tree representation
 - Core tree operations
 - Pattern matching primitives
 - Text analysis foundations
 
-#### Stage 2: Tree Construction & Optimisation
+##### Stage 2: Tree Construction & Optimisation
 - Atomic Suffix Tree (AST) implementation
 - Compact Suffix Tree (CST) implementation
 - Tree construction algorithms
 - Performance optimisation
 
-#### Stage 3: Advanced Pattern Matching
+##### Stage 3: Advanced Pattern Matching
 - Complex substring search operations
 - Longest common substring detection
 - Repeated substring identification
 - Let-binding optimisations
 
-#### Stage 4: Streaming & Collection Abstractions
+##### Stage 4: Streaming & Collection Abstractions
 - Stream-based tree construction
 - Lazy evaluation implementation
 - Collection type abstractions
@@ -30,7 +30,7 @@ A comprehensive, purely functional implementation of suffix trees in Racket, fea
 
 ### 🎯 Core Features
 
-#### Base Tree Structure
+##### Base Tree Structure
 The suffix tree is represented as a list of branches, where each branch contains:
 - A label (list of characters)
 - A subtree (another suffix tree)
@@ -49,7 +49,7 @@ Example Tree (for "BANANA$"):
        ((#\N #\A #\$))))          ; Suffix "NANA$"
 ```
 
-#### Core Operations (Stage 1)
+##### Core Operations (Stage 1)
 ```racket
 ; Base Tree Operations
 (define (first-branch st)           ; Get first branch
@@ -65,9 +65,9 @@ Example Tree (for "BANANA$"):
 (define (st-has-pattern? st pattern)         ; Check if pattern exists
 ```
 
-#### Tree Construction (Stage 2)
+##### Tree Construction (Stage 2)
 
-##### Atomic Suffix Tree (AST)
+###### Atomic Suffix Tree (AST)
 - Single character edge labels
 - Maximum number of edges
 - Optimised for pattern matching
@@ -75,7 +75,7 @@ Example Tree (for "BANANA$"):
 (define text->ast (text->st ast-func))
 ```
 
-##### Compact Suffix Tree (CST)
+###### Compact Suffix Tree (CST)
 - Longest common prefix edge labels
 - Minimum number of edges
 - Space-efficient representation
@@ -83,7 +83,7 @@ Example Tree (for "BANANA$"):
 (define text->cst (text->st cst-func))
 ```
 
-#### Advanced Pattern Matching (Stage 3)
+##### Advanced Pattern Matching (Stage 3)
 ```racket
 ; Substring search with let-binding optimisation
 (define (substring? text pattern)
@@ -103,7 +103,7 @@ Example Tree (for "BANANA$"):
     ...))
 ```
 
-#### Streaming Architecture (Stage 4)
+##### Streaming Architecture (Stage 4)
 - Lazy tree construction
 - Stream-based node evaluation
 - Memory-efficient processing
@@ -121,14 +121,14 @@ Example Tree (for "BANANA$"):
 
 ### 🔍 Implementation Details
 
-#### Functional Abstractions
+##### Functional Abstractions
 - Pure functional implementation
 - Tail-recursive optimisations
 - Higher-order functions
 - Currying patterns
 - Let-binding optimisations
 
-#### Performance Considerations
+##### Performance Considerations
 - O(n) space complexity for construction
 - O(m) time complexity for pattern matching
 - Lazy evaluation prevents unnecessary computation
@@ -137,18 +137,18 @@ Example Tree (for "BANANA$"):
 
 ### 📊 Usage Examples
 
-#### Basic Pattern Matching
+##### Basic Pattern Matching
 ```racket
 (substring? "banana" "ana") ; Returns #t
 ```
 
-#### Suffix Analysis
+##### Suffix Analysis
 ```racket
 (get-suffixes '(#\w #\h #\y #\$))
 ; ⇒ '((#\w #\h #\y #\$) (#\h #\y #\$) (#\y #\$) (#\$))
 ```
 
-#### Advanced Operations
+##### Advanced Operations
 ```racket
 ; Find longest common substring
 (longest-common-substring 
