@@ -4,14 +4,15 @@
 (provide (all-defined-out))
 
 ; TODO 2
-; Implementați o funcție care primește două cuvinte (liste
-; de caractere) w1 și w2 și calculează cel mai lung prefix
-; comun al acestora, împreună cu restul celor două cuvinte
-; după eliminarea prefixului comun.
-; ex:
+; Implement a function that takes two words (lists of characters) w1 and w2
+; and computes their longest common prefix, along with the remainder of both words
+; after removing the common prefix.
+; Example:
 ; (longest-common-prefix '(#\w #\h #\y) '(#\w #\h #\e #\n))
-; => '((#\w #\h) (#\y) (#\e #\n))
-; Folosiți recursivitate pe coadă.
+; Expected output:
+; '((#\w #\h) (#\y) (#\e #\n))
+; Use tail recursion.
+
 (define (longest-common-prefix w1 w2)
   (longest-help w1 w2 null w1 w2))
 
@@ -23,32 +24,10 @@
           (longest-help null null w3 restw1 restw2))))
 
 ; TODO 3
-; Implementați recursiv o funcție care primește o listă nevidă 
-; de cuvinte care încep cu același caracter și calculează cel 
-; mai lung prefix comun al acestora.
-; Opriți căutarea (parcurgerea) în momentul în care aveți garanția 
-; că prefixul comun curent este prefixul comun final.
+; Implement a recursive function that takes a non-empty list of words starting 
+; with the same character and calculates the longest common prefix of these words. 
+; Stop searching once the current common prefix is guaranteed to be the final common prefix.
 
-
-;; Următoarele două funcții sunt utile căutării unui șablon
-;; (pattern) într-un text cu ajutorul arborelui de sufixe.
-;; Ideea de căutare este următoarea:
-;; - dacă șablonul există în text, atunci există un sufix care
-;;   începe cu acest șablon, deci există o cale care începe din
-;;   rădăcina arborelui care se potrivește cu șablonul
-;; - vom căuta ramura a cărei etichetă începe cu prima literă
-;;   din șablon
-;; - dacă nu găsim această ramură, șablonul nu apare în text
-;; - dacă șablonul este conținut integral în eticheta ramurii,
-;;   atunci el apare în text
-;; - dacă șablonul se potrivește cu eticheta dar nu este conținut
-;;   în ea (de exemplu șablonul "nana$" se potrivește cu eticheta
-;;   "na"), atunci continuăm căutarea în subarborele ramurii
-;; - dacă șablonul nu se potrivește cu eticheta (de exemplu
-;;   șablonul "numai" nu se potrivește cu eticheta "na"), atunci
-;;   el nu apare în text (altfel, eticheta ar fi fost "n", nu
-;;   "na", pentru că eticheta este cel mai lung prefix comun al
-;;   sufixelor din subarborele său)
 (define (longest-common-prefix-of-list words)
  
   (define (helper words prefix)
@@ -61,24 +40,14 @@
   (helper (cdr words) (car words)))
 
 ; TODO 4
-; Implementați funcția match-pattern-with-label care primește un
-; arbore de sufixe și un șablon nevid și realizează un singur pas 
-; din procesul prezentat mai sus - identifică ramura arborelui a
-; cărei etichetă începe cu prima literă din șablon, apoi
-; determină cât de bine se potrivește șablonul cu eticheta,
-; întorcând ca rezultat:
-; - true, dacă șablonul este conținut integral în etichetă
-; - lista (etichetă, nou pattern, subarbore), dacă șablonul se
-;   potrivește cu eticheta dar nu este conținut în ea
-;   (ex: ("na", "na$", subarborele de sub eticheta "na")
-;   pentru șablonul inițial "nana$" și eticheta "na")
-; - lista (false, cel mai lung prefix comun între etichetă și
-;   șablon), dacă șablonul nu s-a potrivit cu eticheta sau nu
-;   s-a găsit din start o etichetă care începe cu litera dorită
-;   (ex1: (false, "n") pentru șablonul "numai" și eticheta "na")
-;   (ex2: (false, "") pentru etichetă negăsită)
-; Obs: deși exemplele folosesc stringuri pentru claritate, vă
-; reamintim că în realitate lucrăm cu liste de caractere.
+; Implement the match-pattern-with-label function that receives a suffix tree 
+; and a non-empty pattern. It performs one step of the pattern matching process: 
+; identifies the tree branch whose label starts with the first character of the pattern 
+; and determines how well the pattern matches the label, returning:
+; - true if the pattern is entirely contained in the label.
+; - A list (label, new-pattern, subtree) if the pattern matches the label but is not fully contained in it.
+; - A list (false, longest-common-prefix) if no match is found or no label starting with the desired letter is found.
+
 (define (match-pattern-with-label st pattern)
   (define branch (get-ch-branch st (car pattern)))
  
@@ -95,17 +64,11 @@
               (else (list #f prefix))))))
 
 ; TODO 5
-; Implementați funcția st-has-pattern? care primește un
-; arbore de sufixe și un șablon și întoarce true dacă șablonul
-; apare în arbore, respectiv false în caz contrar.
+; Implement the st-has-pattern? function that takes a suffix tree and a pattern 
+; and returns true if the pattern appears in the tree, or false otherwise.
+
 (define (st-has-pattern? st pattern)
- 
   (define match (match-pattern-with-label st pattern))
- 
   (cond ((equal? match #t) #t)
-
-
         ((equal? (first match) #f) #f)
-
-
         (else (st-has-pattern? (third match) (second match)))))

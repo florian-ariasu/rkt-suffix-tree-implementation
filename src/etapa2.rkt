@@ -4,150 +4,128 @@
 
 (provide (all-defined-out))
 
-;; În această etapă definim algoritmul de construcție a unui
-;; arbore de sufixe (atât cel compact, cât și cel atomic) pe
-;; baza unui text și a unui alfabet dat. Se știe că textul
-;; utilizează doar simboluri prezente în alfabet.
-;; Abordarea este următoarea:
-;; 1. obținem toate sufixele textului
-;; 2. pentru fiecare caracter din alfabet, determinăm sufixele
-;;    care încep cu acel caracter: ele vor fi grupate în câte
-;;    o ramură a arborelui de sufixe (exceptând caracterele
-;;    care nu apar in text - acestea nu generează ramuri)
-;; 3. pentru fiecare listă de sufixe care încep cu un același
-;;    caracter, determinăm eticheta ramurii, respectiv noile
-;;    sufixe care vor genera subarborele de sub etichetă
-;;    - în cazul unui AST (atomic suffix tree), eticheta este
-;;      chiar primul caracter, iar noile sufixe sunt vechile
-;;      sufixe fără primul caracter
-;;    - în cazul unui CST (compact suffix tree), eticheta este
-;;      cel mai lung prefix comun al sufixelor, iar sufixele
-;;      noi se obțin din cele vechi prin îndepărtarea acestui
-;;      prefix
-;; 4. transformăm fiecare rezultat de la pasul 3 într-o ramură
-;;    - eticheta este deja calculată
-;;    - calculul subarborilor se realizează repetând pașii 2-4
-;;      pentru noile sufixe
+;; In this stage, we define the algorithm for constructing
+;; a suffix tree (both compact and atomic) based on a text
+;; and a given alphabet. The text contains only symbols from the alphabet.
+;; Approach:
+;; 1. Obtain all suffixes of the text.
+;; 2. For each character in the alphabet, find suffixes
+;;    starting with that character. They will form branches of the tree.
+;; 3. For each group of suffixes starting with the same character, 
+;;    determine the branch label and the new suffixes:
+;;    - For an AST, the label is the first character, and new suffixes
+;;      are the old ones without the first character.
+;;    - For a CST, the label is the longest common prefix, and 
+;;      new suffixes are the old ones without this prefix.
+;; 4. Transform each result into a branch:
+;;    - The label is already computed.
+;;    - Repeat steps 2-4 for new suffixes.
 
+;; TODO 1: Implement a recursive function that takes a text 
+;; (list of characters) and returns the list of all suffixes 
+;; (from the longest to the shortest). The text ends with the 
+;; special character "$", and all suffixes should end with "$".
 
-; TODO 1
-; Implementați recursiv o funcție care primește un text (listă 
-; de caractere) și determină lista tuturor sufixelor acestuia
-; (de la cel mai lung la cel mai scurt).
-; Se știe că textul se va termina cu caracterul special "$", 
-; și cu acest caracter trebuie să se termine și toate sufixele
-; din lista rezultat (de la întreg textul urmat de "$" până la
-; sufixul vid - reprezentat de un singur "$").
-; ex:
-; (get-suffixes '(#\w #\h #\y #\$))
-; => '((#\w #\h #\y #\$) (#\h #\y #\$) (#\y #\$) (#\$))
-; Folosiți recursivitate pe stivă.
 (define (get-suffixes text)
   (if (null? text)
       '()
       (append (list text) (get-suffixes (cdr text)))))
 
-; TODO 2
-; Implementați o funcție care primește o listă de cuvinte 
-; și un caracter ch și întoarce acele cuvinte din listă care 
-; încep cu caracterul ch.
-; Atenție, este posibil ca unele cuvinte să fie vide.
-; Folosiți funcționale (și nu folosiți recursivitate explicită).
+;; TODO 2: Implement a function that receives a list of words
+;; and a character `ch` and returns the words starting with `ch`.
+;; Use functional programming (no explicit recursion).
+
 (define (get-ch-words words ch)
   (filter (λ (word) (and (not (null? word)) (same-character word ch)))
-                   words))
+          words))
 
 (define (same-character word ch)
   (if (eq? (car word) ch)
       #t
       #f))
 
-; TODO 3
-; Implementați o funcție care primește o listă nevidă de sufixe 
-; care încep cu același caracter și calculează perechea
-; (etichetă AST pentru aceste sufixe, lista noilor sufixe).
-; Reamintim că pentru un AST eticheta este chiar primul caracter
-; (dar sub formă de listă de caractere, pentru a putea fi 
-; procesată la fel ca etichetele mai complexe), iar noile sufixe 
-; se obțin din cele vechi prin eliminarea acestui caracter.
-; Nu folosiți recursivitate explicită.
+;; TODO 3: Implement a function that takes a non-empty list of suffixes 
+;; starting with the same character and calculates the pair (label AST, 
+;; list of new suffixes). The label for AST is the first character.
+
 (define (ast-func suffixes)
   (cons (list (caar suffixes)) (map cdr suffixes)))
 
+;; TODO 4: Implement a function that computes the pair (label CST, 
+;; list of new suffixes) for suffixes starting with the same character.
+;; The label for CST is the longest common prefix.
 
-; TODO 4
-; Implementați o funcție care primește o listă nevidă de sufixe 
-; care încep cu același caracter și calculează perechea
-; (etichetă CST pentru aceste sufixe, lista noilor sufixe).
-; Reamintim că pentru un CST eticheta este cel mai lung prefix
-; comun, iar noile sufixe se obțin din cele vechi prin eliminarea 
-; acestui prefix.
-; Nu folosiți recursivitate explicită.
 (define (cst-func suffixes)
   (let ((common-prefix (longest-common-prefix-of-list suffixes)))
     (append (list common-prefix)
             (map (λ (suffix) (drop suffix (length common-prefix)))
                  suffixes))))
 
-; TODO 5
-; Implementați funcția suffixes->st care construiește un
-; arbore de sufixe pe baza unei liste de sufixe, a unui 
-; alfabet (listă de caractere care include toate caracterele
-; din sufixe), și a unei funcții care indică modul de
-; etichetare (atomic sau compact).
-; Când argumentul funcție va fi ast-func, vom obține un AST.
-; Când argumentul funcție va fi cst-func, vom obține un CST.
-; Obs: Funcția surprinde pașii 2-4 descriși mai sus.
-; Funcția suffixes->st poate fi recursivă explicit, dar
-; pentru celelalte prelucrări (pașii 2 și 3) trebuie să
-; folosiți funcționale.
+;; TODO 5: Implement the suffixes->st function that constructs a suffix tree
+;; from a list of suffixes, an alphabet, and a labeling function.
+;; It can generate both AST and CST based on the labeling function.
+
 (define (suffixes->st labeling-func suffixes alphabet)
   (if (null? suffixes)
       empty-st
-      (let* ((by-first-char (map (λ (ch) (get-ch-words suffixes ch)) alphabet))
-             (useful-ch-lists (filter (compose not null?) by-first-char))
-             (branches (map labeling-func useful-ch-lists)))
-        (map (λ (branch) (cons (get-branch-label branch)
-                               (suffixes->st labeling-func (cdr branch) alphabet)))
-             branches))))
+      (let* ((grouped-suffixes (group-suffixes-by-alphabet suffixes alphabet))
+             (non-empty-groups (filter (lambda (group) (not (null? (cdr group)))) grouped-suffixes))
+             (branches (map (lambda (group) 
+                              (let ((branch (labeling-func (cdr group))))
+                                (cons (car branch)
+                                      (suffixes->st labeling-func (cdr branch) alphabet))))
+                            non-empty-groups)))
+        branches)))
 
-; TODO 6
-; Această sarcină constă în implementarea a trei funcții:
-; text->st, text->ast, text->cst, unde text->ast și text->cst
-; trebuie obținute ca aplicații parțiale ale lui text->st.
-; În acest scop, funcția text->st trebuie să fie curry.
+(define (group-suffixes-by-alphabet suffixes alphabet)
+  (map (lambda (ch) 
+         (cons ch (get-ch-words suffixes ch)))
+       alphabet))
 
-; a) Implementați funcția text->st care primește un text
-; (listă de caractere) și o funcție de etichetare și întoarce
-; arborele de sufixe corespunzând acestui text cu această
-; metodă de etichetare.
-; Pași:
-; - obținem sufixele textului la care adăugăm marcajul final $
-; - obținem alfabetul sortat asociat textului prin utilizarea
-;   funcțiilor de bibliotecă sort, remove-duplicates, char<?
-;   (inclusiv caracterul $)
-; - apelăm corespunzător funcția suffixes->st
-; Vă veți defini singuri parametrii funcției text->st și ordinea 
-; acestora, dar funcția trebuie să fie curry într-un mod care 
-; facilitează derivarea funcțiilor text->ast și text->cst de 
-; mai jos prin aplicație parțială a funcției text->st.
-; Obs: Din acest motiv, checker-ul testează doar funcțiile
-; text->ast și text->cst.
+;; TODO 6: Implement three functions: text->st, text->ast, text->cst.
+;; These derive from text->st using partial application.
+;; a) Implement text->st, which takes a text and a labeling function
+;; and returns the corresponding suffix tree.
+
 (define (text->st labeling-func)
-  (λ (text)
-    (let* ((text$ (append text '(#\$)))
-           (suffixes (get-suffixes text$))
-           (alphabet (sort (remove-duplicates text$) char<?)))
-      (suffixes->st labeling-func suffixes alphabet))))
+  (lambda (text)
+    (let* ((text-with-terminator (append text '(#\$)))
+           (suffixes (generate-suffixes text-with-terminator))
+           (alphabet (create-sorted-alphabet text-with-terminator)))
+      (build-suffix-tree labeling-func suffixes alphabet))))
 
-; b) Din funcția text->st derivați funcția text->ast care
-; primește un text (listă de caractere) și întoarce AST-ul
-; asociat textului.
+(define (generate-suffixes text)
+  (if (null? text)
+      '()
+      (cons text (generate-suffixes (cdr text)))))
+
+(define (create-sorted-alphabet text)
+  (sort (remove-duplicates text) char<?))
+
+(define (build-suffix-tree labeling-func suffixes alphabet)
+  (if (null? suffixes)
+      empty-st
+      (let* ((grouped-suffixes (group-by-first-char suffixes alphabet))
+             (non-empty-groups (filter (lambda (group) (not (null? (cdr group)))) grouped-suffixes))
+             (branches (map (lambda (group)
+                              (let ((branch (labeling-func (cdr group))))
+                                (cons (car branch)
+                                      (build-suffix-tree labeling-func (cdr branch) alphabet))))
+                            non-empty-groups)))
+        branches)))
+
+(define (group-by-first-char suffixes alphabet)
+  (map (lambda (ch)
+         (cons ch (filter (lambda (suffix) 
+                            (and (not (null? suffix)) 
+                                 (char=? (car suffix) ch))) 
+                          suffixes)))
+       alphabet))
+
+;; b) Derive text->ast, which returns the AST for a text.
 (define text->ast
   (text->st ast-func))
 
-; c) Din funcția text->st derivați funcția text->cst care
-; primește un text (listă de caractere) și întoarce CST-ul
-; asociat textului.
+;; c) Derive text->cst, which returns the CST for a text.
 (define text->cst
   (text->st cst-func))
