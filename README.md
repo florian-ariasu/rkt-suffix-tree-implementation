@@ -168,4 +168,4 @@ Areas for contribution:
 
 ### Licence
 
-This project is licensed under the MIT Licence. See [LICENCE](LICENCE) for complete details.
+This project is licensed under the MIT Licence. See [LICENCE](./LICENSE) for complete details.
