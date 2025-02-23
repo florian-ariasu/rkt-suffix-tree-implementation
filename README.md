@@ -166,6 +166,6 @@ Areas for contribution:
 - Text analysis feature expansion
 - Stream processing improvement
 
-### Licence
+### 📜 Licence
 
-This project is licensed under the MIT Licence. See [LICENCE](./LICENSE) for complete details.
+This project is licensed under the MIT Licence. See the [LICENCE](./LICENSE) file for further details.
